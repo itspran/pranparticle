@@ -26,6 +26,7 @@ class Particle {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.colorDistance = 0;
     this.size = 2;
     this.baseX = this.x;
     this.baseY = this.y;
@@ -48,6 +49,7 @@ class Particle {
     let force = (maxDistance - distance) / maxDistance;
     let directionX = forceDirectionX * force * this.density;
     let directionY = forceDirectionY * force * this.density;
+    this.colorDistance = distance;
 
     if (distance < mouse.radius) {
       this.x -= directionX;
@@ -82,7 +84,6 @@ function init() {
   //   particleArray.push(new Particle(100, 300));
 }
 init();
-console.log(particleArray);
 
 function animate() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -102,9 +103,14 @@ function connect() {
       let dx = particleArray[a].x - particleArray[b].x;
       let dy = particleArray[a].y - particleArray[b].y;
       let distance = Math.sqrt(dx * dx + dy * dy);
+      opacityValue = 1 - distance / 30;
       if (distance < 30) {
-        opacityValue = 1 - distance / 30;
-        ctx.strokeStyle = "rgb(255,255,255," + opacityValue + ")";
+        if (particleArray[a].colorDistance < mouse.radius) {
+          ctx.strokeStyle = "rgb(255,0,0," + opacityValue + ")";
+        } else {
+          ctx.strokeStyle = "rgb(255,255,255," + opacityValue + ")";
+        }
+
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(particleArray[a].x, particleArray[a].y);
